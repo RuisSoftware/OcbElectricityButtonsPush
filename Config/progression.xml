@@ -1,11 +1,4 @@
-<configs patcher-version="4">
-	<modif condition="UndeadLegacy_CoreModule">
-		<!-- unlocks items via schematics only -->
-	</modif>
-	<modelsif condition="DarknessFallsCore">
-		<include path="progression.a21.df.xml"/>
-	</modelsif>
-	<modelse>
-		<include path="progression.a21.xml"/>
-	</modelse>
+<configs>
+	<csv xpath="/progression/crafting_skills/crafting_skill[@name='craftingElectrician']/display_entry/unlock_entry[contains(@item, 'switch')]/@item" delim="," op="add">ocbPushButtonVariantHelper</csv>
+	<csv xpath="/progression/crafting_skills/crafting_skill[@name='craftingElectrician']/effect_group/passive_effect[contains(@tags, 'switch')]/@tags" delim="," op="add">ocbPushButtonVariantHelper</csv>
 </configs>

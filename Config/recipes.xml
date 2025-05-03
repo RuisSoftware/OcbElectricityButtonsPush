@@ -1,11 +1,14 @@
 <configs patcher-version="4">
 	<modif condition="UndeadLegacy_CoreModule">
-		<include path="recipes.a20.ulm.xml"/>
 	</modif>
-	<modelsif condition="DarknessFallsCore">
-		<include path="recipes.a21.df.xml"/>
-	</modelsif>
 	<modelse>
-		<include path="recipes.a21.xml"/>
+		<append xpath="/recipes">
+			<recipe name="ocbPushButtonVariantHelper" count="1" tags="perkAdvancedEngineering,learnable" craft_area="workbench" material_based="false" craft_time="25">
+				<ingredient name="resourceScrapPolymers" count="4"/>
+				<ingredient name="resourceElectricParts" count="2"/>
+				<ingredient name="resourceMechanicalParts" count="2"/>
+				<ingredient name="resourceSpring" count="2"/>
+			</recipe>
+		</append>
 	</modelse>
 </configs>

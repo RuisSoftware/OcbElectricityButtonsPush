@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 
 public static class UpgradeVariantHelperPatch
 {
-
     // ####################################################################
     // ####################################################################
 
@@ -16,7 +15,7 @@ public static class UpgradeVariantHelperPatch
         {
             // Check if the block has `ReturnVariantHelper` set
             if (Block.list[stack.itemValue.type].Properties.Values
-                .TryGetString("ReturnVariantHelper", out string variant))
+                .TryGetValue("ReturnVariantHelper", out string variant))
             {
                 // Upgrade `itemValue` to variant helper block type
                 if (Block.GetBlockByName(variant) is Block helper)
@@ -31,56 +30,51 @@ public static class UpgradeVariantHelperPatch
     [HarmonyPatch(typeof(BlockPowered), "EventData_Event")]
     public static class BlockPowered_EventData_Event
     {
-
-        static IEnumerable<CodeInstruction> Transpiler
-            (IEnumerable<CodeInstruction> instructions)
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var codes = new List<CodeInstruction>(instructions);
-
             bool searchFirstMarker = true;
 
             for (var i = 0; i < codes.Count; i++)
             {
                 if (searchFirstMarker)
                 {
-                    if (codes[i].opcode == OpCodes.Call)
+                    if (codes[i].opcode == OpCodes.Call &&
+                        codes[i].operand.ToString().StartsWith("ItemValue ToItemValue("))
                     {
-                        // Simply compare to string representation (any better way?)
-                        if (codes[i].operand.ToString().StartsWith("ItemValue ToItemValue("))
-                        {
-                            searchFirstMarker = false;
-                        }
+                        searchFirstMarker = false;
                     }
                 }
                 else if (codes[i].opcode == OpCodes.Stloc_S)
                 {
-                    // Create the new OpCodes to be inserted
+                    // Prepare our injection
                     var op1 = new CodeInstruction(OpCodes.Ldloc_S, codes[i].operand);
-                    var op2 = CodeInstruction.Call(typeof(UpgradeVariantHelperPatch), "UpgradeVariantHelper");
-                    if (i + 2 < codes.Count)
+                    var op2 = CodeInstruction.Call(
+                        typeof(UpgradeVariantHelperPatch),
+                        nameof(UpgradeVariantHelper)
+                    );
+
+                    // Avoid double-patching
+                    if (i + 2 < codes.Count
+                        && codes[i + 1].opcode == op1.opcode
+                        && codes[i + 1].operand.Equals(op1.operand)
+                        && codes[i + 2].opcode == OpCodes.Call
+                        && codes[i + 2].operand.ToString().Contains(nameof(UpgradeVariantHelper)))
                     {
-                        // Check if the code has already been patched by us?
-                        if (codes[i + 1].opcode == op1.opcode && codes[i + 1].operand == op1.operand)
-                        {
-                            // Do some heuristics as we may not reference the same function call
-                            if (codes[i + 2].opcode == OpCodes.Call && codes[i + 2].operand.ToString().Contains("UpgradeVariantHelper"))
-                            {
-                                break;
-                            }
-                        }
+                        break;
                     }
-                    // Insert new code line
+
+                    // Insert our helper call after the local store
                     codes.Insert(i + 1, op1);
                     codes.Insert(i + 2, op2);
-                    // Finished patching
                     break;
                 }
             }
+
             return codes;
         }
     }
 
     // ####################################################################
     // ####################################################################
-
 }

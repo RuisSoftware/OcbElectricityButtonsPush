@@ -16,7 +16,7 @@ public class BlockButtonPush : BlockPowered
     // See `GetBlockActivationCommands` where options get enabled/disabled
     // ####################################################################
 
-    private readonly BlockActivationCommand[] cmds = new BlockActivationCommand[3]
+    private new readonly BlockActivationCommand[] cmds = new BlockActivationCommand[3]
     {
         new BlockActivationCommand("light", "electric_switch", true),
         new BlockActivationCommand("options", "tool", true),
@@ -121,9 +121,12 @@ public class BlockButtonPush : BlockPowered
     // ####################################################################
 
     public override bool OnBlockActivated(
-        string cmd, WorldBase world,
-        int clrIdx, Vector3i position,
-        BlockValue bv, EntityAlive player)
+        string cmd,
+        WorldBase world,
+        int clrIdx,
+        Vector3i position,
+        BlockValue bv,
+        EntityPlayerLocal player)
     {
         // Check for master block
         if (bv.ischild)

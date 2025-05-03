@@ -120,7 +120,7 @@ public class PowerPushButton : PowerTrigger
     // ####################################################################
     // ####################################################################
 
-    protected override void HandleSingleUseDisable()
+    public override void HandleSingleUseDisable()
     {
         if (IsInstantToggle()) return;
         base.HandleSingleUseDisable();
