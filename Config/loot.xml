@@ -1,5 +1,7 @@
-﻿<configs>
-	<append xpath="/lootcontainers/lootgroup[@name='groupScrapRare']">
-		<item name="ocbPushButtonVariantHelper" count="1" loot_prob_template="med"/>
-	</append>
+﻿<configs patcher-version="7">
+  <modelse>
+  <append xpath="/lootcontainers/lootgroup[@name='groupScrapRare']">
+    <item name="ocbPushButtonVariantHelper" count="1" loot_prob_template="med"/>
+  </append>
+  </modelse>
 </configs>

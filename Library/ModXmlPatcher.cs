@@ -388,25 +388,40 @@ static class ModXmlPatcher
 
     // Hook into vanilla XML Patcher
     [HarmonyPatch(typeof(XmlPatcher))]
-    [HarmonyPatch("PatchXml", new Type[] { typeof(XmlFile), typeof(XElement), typeof(XmlFile), typeof(Mod) })]
-    static class XmlPatcher_PatchXml
+    [HarmonyPatch("PatchXml")]
+    public class XmlPatcher_PatchXml
     {
         static bool Prefix(
-            XmlFile _xmlFile,
+            ref XmlFile _xmlFile,
+            ref XmlFile _patchFile,
             XElement _containerElement,
-            XmlFile _patchFile,
-            Mod _patchingMod,
-            ref bool __result
-        )
+            ref Mod _patchingMod,
+            ref bool __result)
         {
-            __result = ModXmlPatcher.PatchXml(
-                _xmlFile,
-                _patchFile,
-                _containerElement,
-                _patchingMod
-            );
-            // skip originele
+            // According to Harmony docs, returning false on a prefix
+            // should skip the original and all other prefixers, but
+            // it seems that it only skips the original. The other
+            // prefixers are still called. The reason for this is
+            // unknown, but could be because the game uses HarmonyX.
+            // Might also be something solved with latest versions,
+            // as the game uses a rather old HarmonyX version (2.2).
+            // To address this we simply "consume" one of the args.
+            if (_patchFile == null) return false;
+            XElement element = _patchFile.XmlDoc.Root;
+            if (element == null) return false;
+            string version = element.GetAttribute("patcher-version");
+            if (!string.IsNullOrEmpty(version))
+            {
+                // Check if version is too new for us
+                if (int.Parse(version) > 7) return true;
+            }
+            // Call out to static helper function
+            __result = PatchXml(_xmlFile, _patchFile,
+                _containerElement, _patchingMod);
+            // First one wins
+            _patchFile = null;
             return false;
         }
     }
+
 }

@@ -1,14 +1,10 @@
-<configs patcher-version="4">
-	<modif condition="UndeadLegacy_CoreModule">
-	</modif>
-	<modelse>
-		<append xpath="/recipes">
-			<recipe name="ocbPushButtonVariantHelper" count="1" tags="perkAdvancedEngineering,learnable" craft_area="workbench" material_based="false" craft_time="25">
-				<ingredient name="resourceScrapPolymers" count="4"/>
-				<ingredient name="resourceElectricParts" count="2"/>
-				<ingredient name="resourceMechanicalParts" count="2"/>
-				<ingredient name="resourceSpring" count="2"/>
-			</recipe>
-		</append>
-	</modelse>
+<configs>
+  <append xpath="/recipes">
+    <recipe name="ocbPushButtonVariantHelper" count="1" tags="perkAdvancedEngineering,learnable" craft_area="workbench" material_based="false" craft_time="25">
+      <ingredient name="resourceScrapPolymers" count="4"/>
+      <ingredient name="resourceElectricParts" count="2"/>
+      <ingredient name="resourceMechanicalParts" count="2"/>
+      <ingredient name="resourceSpring" count="2"/>
+    </recipe>
+  </append>
 </configs>

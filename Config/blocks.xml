@@ -1,4 +1,5 @@
-<configs>
+<configs patcher-version="7">
+  <modelse>
 	<append xpath="/blocks">
 		<block name="ocbPushButton01Base">
 			<property name="CreativeMode" value="None"/>
@@ -122,4 +123,5 @@
 			/>
 		</block>
 	</append>
+  </modelse>
 </configs>
